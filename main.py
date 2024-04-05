@@ -40,8 +40,9 @@ while (ip := ipAddresses.readline().strip()):
 print(ipWithPass)
 
 outputRes = []
-# Menggunakan IP dan kata sandi yang berhasil untuk koneksi SSH dan mendapatkan informasi sistem
+# Menambahkan informasi IP dan password yang berhasil
 for ip, password in ipWithPass:
+    outputRes.append(f'\n=== IP: {ip}, Password: {password} ===\n')
     try:
         ssh.connect(ip, username='root', password=password)
         # Perintah-perintah yang akan dijalankan pada remote server
