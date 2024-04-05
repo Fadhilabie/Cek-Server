@@ -32,14 +32,17 @@ outputRes = []
 for ip, password in ipWithPass:
     try:
         ssh.connect(ip, username='root', password=password)
-        stdin, stdout, stderr = ssh.exec_command('lscpu')
-        rows = stdout.read().decode('utf-8').split('\n')
-        for row in rows:
-            if 'CPU(s):' in row:
-                outputRes.append(f'{ip} {row.split(":")[-1].strip()}')
-                break
-
+        commands = ['lscpu', 'free -h', 'lsblk', 'hostnamectl', 'dmidecode -t system']
+        for command in commands:
+            stdin, stdout, stderr = ssh.exec_command(command)
+            rows = stdout.read().decode('utf-8').split('\n')
+            outputRes.append(f'\n==== {command.upper()} ====\n')
+            for row in rows:
+                outputRes.append(row.strip())
     except Exception as err:
         print(f'Error {ip} :', err)
-with open('output', 'w') as fp: fp.write('\n'.join(outputRes))
+
+with open('output', 'w') as fp:
+    fp.write('\n'.join(outputRes))
+
 ssh.close()
